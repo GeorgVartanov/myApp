@@ -1,8 +1,8 @@
-package pgStorage
+package pg
 
 import (
 	"fmt"
-	"github.ru/GeorgVartanov/myApp/pkg/database/pgDB"
+	"github.ru/GeorgVartanov/myApp/pkg/database/postgres"
 	"io/ioutil"
 	"log"
 	"os"
@@ -10,10 +10,10 @@ import (
 )
 
 type UserPostgresStorage struct {
-	*pgDB.PostgresDB
+	*postgres.PostgresDB
 }
 
-func NewUserPostgresStorage(pg *pgDB.PostgresDB) *UserPostgresStorage {
+func NewUserPostgresStorage(pg *postgres.PostgresDB) *UserPostgresStorage {
 	return &UserPostgresStorage{PostgresDB: pg}
 }
 
@@ -24,7 +24,7 @@ func (u *UserPostgresStorage) CreateUserTableORDrop(status bool) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	sqlPath := filepath.Join(baseDir, "pkg", "users", "storage", "pgStorage", "sql")
+	sqlPath := filepath.Join(baseDir, "pkg", "users", "storage", "pg", "sql")
 	if status {
 		createUserPath := filepath.Join(sqlPath, "createUserTable.sql")
 		c, ioErr := ioutil.ReadFile(createUserPath)
@@ -52,6 +52,5 @@ func (u *UserPostgresStorage) CreateUserTableORDrop(status bool) error {
 		}
 
 	}
-
 	return nil
 }

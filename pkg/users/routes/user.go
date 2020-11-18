@@ -6,11 +6,12 @@ import (
 )
 
 var (
-	emailIsEmpty      = errors.New("email field is empty, should be filled")
-	passwordIsEmpty   = errors.New("password field is empty, should be filled")
-	emailContainsChar = errors.New("email doesn't contains @, please fill email field properly")
-	passwordLength    = errors.New("password is less than 6 characters")
-	passwordMatch     = errors.New("passwords doesn't match")
+	emailIsEmpty       = errors.New("email field is empty, should be filled")
+	passwordIsEmpty    = errors.New("password field is empty, should be filled")
+	emailContainsChar  = errors.New("email doesn't contains @, please fill email field properly")
+	passwordLength     = errors.New("password is less than 6 characters")
+	passwordMatch      = errors.New("passwords doesn't match")
+	displayNameIsEmpty = errors.New("display name field is empty, should be filled")
 )
 
 //User from router
@@ -21,9 +22,23 @@ type User struct {
 	DisplayName   string `json:"displayName"`
 }
 
+func (u *User) ValidateFieldsUpdate() error {
+	if u.Email == "" {
+		return emailIsEmpty
+	}
+	if !strings.Contains(u.Email, "@") {
+		return emailContainsChar
+	}
+	if u.DisplayName == "" {
+		return displayNameIsEmpty
+	}
+
+	return nil
+}
+
 //ValidateFields All User fields
 func (u *User) ValidateFields() error {
-	if err := u.validateEmail(); err != nil {
+	if err := u.ValidateEmail(); err != nil {
 		return err
 	}
 	if err := u.validatePassword(); err != nil {
@@ -34,7 +49,7 @@ func (u *User) ValidateFields() error {
 	return nil
 }
 
-func (u *User) validateEmail() error {
+func (u *User) ValidateEmail() error {
 	if u.Email == "" {
 		return emailIsEmpty
 	}
@@ -63,5 +78,3 @@ func (u *User) validateDisplayName() {
 		u.DisplayName = u.Email
 	}
 }
-
-

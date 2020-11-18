@@ -1,4 +1,4 @@
-package create
+package update
 
 import "github.ru/GeorgVartanov/myApp/pkg/users/routes"
 

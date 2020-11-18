@@ -2,30 +2,44 @@ package ginGonic
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.ru/GeorgVartanov/myApp/pkg/users/routes"
-	"net/http"
+	"github.ru/GeorgVartanov/myApp/pkg/users/service/create"
+	"github.ru/GeorgVartanov/myApp/pkg/users/service/delete"
+	"github.ru/GeorgVartanov/myApp/pkg/users/service/read"
+	"github.ru/GeorgVartanov/myApp/pkg/users/service/update"
 )
 
-func UserRoutes(r *gin.RouterGroup) {
-
-	r.POST("/create/", CreateUser())
-
+type UserService interface {
+	create.ServiceUserCreate
+	read.ServiceUserRead
+	update.ServiceUserUpdate
+	delete.ServiceUserDelete
 }
 
-func CreateUser() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var newApiUser routes.User
-		if err := c.ShouldBindJSON(&newApiUser); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		if err := newApiUser.ValidateFields(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+type userConttrolers struct {
+	create create.ServiceUserCreate
+	read   read.ServiceUserRead
+	update update.ServiceUserUpdate
+	delete delete.ServiceUserDelete
+}
 
+type UserControllers interface {
+	CreateUser() gin.HandlerFunc
+	ReadAllUser() gin.HandlerFunc
+	ReadAUser() gin.HandlerFunc
+	DeleteAUser() gin.HandlerFunc
+	UpdateUser() gin.HandlerFunc
+}
 
-		c.JSON(http.StatusOK, gin.H{"data": newApiUser})
-		return
-	}
+func NewUserConttrolers(create create.ServiceUserCreate, read read.ServiceUserRead, update update.ServiceUserUpdate, delete delete.ServiceUserDelete) UserControllers {
+	return userConttrolers{create: create, read: read, update: update, delete: delete}
+}
+
+func UserHandler(router *gin.RouterGroup, u UserControllers) {
+
+	router.POST("/create/", u.CreateUser())
+	router.GET("/all/", u.ReadAllUser())
+	router.POST("/one/", u.ReadAUser())
+	router.DELETE("/delete/", u.DeleteAUser())
+	router.PUT("/update/", u.UpdateUser())
+
 }

@@ -1,30 +1,36 @@
 package create
 
-import "github.ru/GeorgVartanov/myApp/pkg/users/routes"
+import (
+	"fmt"
+	"github.ru/GeorgVartanov/myApp/pkg/users/routes"
+	"github.ru/GeorgVartanov/myApp/pkg/users/service/read"
+)
 
 type RepositoryUserCreate interface {
-	Create(u *User) error
+	InsertUser(user *User) (*read.UserWithOutPassword, error)
 }
 
 type ServiceUserCreate interface {
-	Create(r *routes.User) error
+	Create(r *routes.User) (*read.UserWithOutPassword, error)
 }
 
 //service Create ...
 type service struct {
-	r RepositoryUserCreate
+	repo RepositoryUserCreate
 }
 
 //NewCreateUserService Init
 func NewCreateUserService(r RepositoryUserCreate) ServiceUserCreate {
-	return &service{r: r}
+	return &service{repo: r}
 }
 
-func (s *service) Create(r *routes.User) error {
+func (s *service) Create(r *routes.User) (*read.UserWithOutPassword, error) {
 	var newUserCreate User
 	newUserCreate.ConvertToServiceUser(r)
-	if err := s.r.Create(&newUserCreate); err != nil {
-		return err
+	fmt.Printf("Service VALUES %v \n", newUserCreate)
+	userDB, err := s.repo.InsertUser(&newUserCreate)
+	if err != nil {
+		return userDB, err
 	}
-	return nil
+	return userDB, nil
 }
