@@ -1,7 +1,7 @@
 package pg
 
 //	Delete(email string) error
-func (u *UserPostgresStorage) Delete(email string) error {
+func (u *UserPostgresStorage) DeleteByEmail(email string) error {
 	//var user read.User
 
 	//tx := u.MustBegin()

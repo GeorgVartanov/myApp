@@ -14,15 +14,15 @@ var (
 	displayNameIsEmpty = errors.New("display name field is empty, should be filled")
 )
 
-//User from router
-type User struct {
+//UserIn from router
+type UserIn struct {
 	Email         string `json:"email"`
 	Password      string `json:"password"`
 	PasswordCheck string `json:"passwordCheck"`
 	DisplayName   string `json:"displayName"`
 }
 
-func (u *User) ValidateFieldsUpdate() error {
+func (u *UserIn) ValidateFieldsUpdate() error {
 	if u.Email == "" {
 		return emailIsEmpty
 	}
@@ -36,8 +36,8 @@ func (u *User) ValidateFieldsUpdate() error {
 	return nil
 }
 
-//ValidateFields All User fields
-func (u *User) ValidateFields() error {
+//ValidateFields All UserIn fields
+func (u *UserIn) ValidateFields() error {
 	if err := u.ValidateEmail(); err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func (u *User) ValidateFields() error {
 	return nil
 }
 
-func (u *User) ValidateEmail() error {
+func (u *UserIn) ValidateEmail() error {
 	if u.Email == "" {
 		return emailIsEmpty
 	}
@@ -60,7 +60,7 @@ func (u *User) ValidateEmail() error {
 	return nil
 }
 
-func (u *User) validatePassword() error {
+func (u *UserIn) validatePassword() error {
 	if u.Password == "" {
 		return passwordIsEmpty
 	}
@@ -73,7 +73,7 @@ func (u *User) validatePassword() error {
 	return nil
 }
 
-func (u *User) validateDisplayName() {
+func (u *UserIn) validateDisplayName() {
 	if u.DisplayName == "" {
 		u.DisplayName = u.Email
 	}
